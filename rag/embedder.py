@@ -1,24 +1,33 @@
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from langchain.embeddings.base import Embeddings
 from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-
-EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-
-_embedder = None
+from typing import List
 
 
-def get_embedder():
-    global _embedder
-    if _embedder is None:
-        _embedder = HuggingFaceEmbeddings(
-            model_name=EMBED_MODEL,
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True}
-        )
-    return _embedder
+class TFIDFEmbeddings(Embeddings):
+    """Lightweight TF-IDF embeddings — no torch, no API needed."""
+
+    def __init__(self, texts: List[str]):
+        self.vectorizer = TfidfVectorizer(max_features=512)
+        self.vectorizer.fit(texts)
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        matrix = self.vectorizer.transform(texts)
+        return matrix.toarray().tolist()
+
+    def embed_query(self, text: str) -> List[float]:
+        vector = self.vectorizer.transform([text])
+        return vector.toarray()[0].tolist()
+
+
+def get_embedder(texts: List[str]) -> TFIDFEmbeddings:
+    return TFIDFEmbeddings(texts)
 
 
 def build_vectorstore(chunks):
-    embedder = get_embedder()
+    texts = [doc.page_content for doc in chunks]
+    embedder = get_embedder(texts)
     vectorstore = FAISS.from_documents(chunks, embedder)
     return vectorstore
 
