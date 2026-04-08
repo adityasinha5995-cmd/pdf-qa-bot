@@ -1,13 +1,11 @@
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from langchain.embeddings.base import Embeddings
+from langchain_core.embeddings import Embeddings
 from langchain_community.vectorstores import FAISS
 from typing import List
 
 
 class TFIDFEmbeddings(Embeddings):
-    """Lightweight TF-IDF embeddings — no torch, no API needed."""
-
     def __init__(self, texts: List[str]):
         self.vectorizer = TfidfVectorizer(max_features=512)
         self.vectorizer.fit(texts)

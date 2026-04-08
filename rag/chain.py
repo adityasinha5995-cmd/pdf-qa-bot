@@ -1,8 +1,8 @@
 import os
 import streamlit as st
 from langchain_groq import ChatGroq
+from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
 
 PROMPT_TEMPLATE = """You are a helpful assistant that answers questions based strictly on the provided document context.
 
