@@ -40,7 +40,7 @@ with st.sidebar:
 
     model_choice = st.selectbox(
         "Ollama model",
-        ["mistral", "llama3", "llama3.2", "phi3", "gemma"],
+        ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"],
         index=0,
         help="Make sure the model is pulled via: ollama pull <model>"
     )
